@@ -4,10 +4,9 @@ const notFoundError = (req, res) => {
 
 // eslint-disable-next-line no-unused-vars
 const errorHandler = (err, req, res, next) => {
-  const message = err.message || "Teniente Pete";
   const code = err.code || 500;
 
-  res.status(code).json({ error: message });
+  res.status(code).json({ error: err.message });
 };
 
 module.exports = { notFoundError, errorHandler };

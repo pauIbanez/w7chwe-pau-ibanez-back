@@ -9,7 +9,6 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
-
   username: {
     type: String,
     required: true,
@@ -23,6 +22,7 @@ const UserSchema = new Schema({
     type: [SchemaTypes.ObjectId],
     ref: "User",
   },
+  avatar: String,
 });
 
 const User = model("User", UserSchema, "users");
