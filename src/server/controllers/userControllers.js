@@ -1,18 +1,27 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const fs = require("fs");
+const path = require("path");
 const User = require("../../database/models/User");
 
 const secret = process.env.TOKEN_SECRET;
 
 const userRegister = async (req, res, next) => {
   const { name, lastName, username, password } = req.body;
+  const avatar = req.file;
 
-  if (!name || !lastName || !username || !password) {
+  const runErrors = (error) => {
+    fs.unlink(path.join("public/profiles", avatar.filename), () => {
+      next(error);
+    });
+  };
+
+  if (!name || !lastName || !username || !password || !avatar) {
     const error = {
       code: 400,
       message: "Missing user data",
     };
-    next(error);
+    runErrors(error);
     return;
   }
 
@@ -23,7 +32,7 @@ const userRegister = async (req, res, next) => {
       code: 409,
       message: "Username already taken",
     };
-    next(error);
+    runErrors(error);
     return;
   }
 
@@ -36,6 +45,7 @@ const userRegister = async (req, res, next) => {
       lastName,
       username,
       password: hashedPassword,
+      avatar: avatar.filename,
     });
 
     req.user = {
@@ -44,35 +54,24 @@ const userRegister = async (req, res, next) => {
       id,
     };
 
-    next();
+    res.status(201).json({});
   } catch (error) {
-    next(error);
+    runErrors(error);
   }
 };
 
 const loginUser = async (req, res, next) => {
-  let user;
-  let code = 200;
-  if (req.user) {
-    user = req.user;
-    code = 201;
-  } else {
-    const { username, password } = req.body;
-    if (!username || !password) {
-      const error = {
-        code: 400,
-        message: "User data not provided",
-      };
-      next(error);
-      return;
-    }
-    user = {
-      username,
-      password,
+  const { username, password } = req.body;
+  if (!username || !password) {
+    const error = {
+      code: 400,
+      message: "User data not provided",
     };
+    next(error);
+    return;
   }
 
-  const userExists = await User.findOne({ username: user.username });
+  const userExists = await User.findOne({ username });
 
   const error = {
     message: "Invalid username or password",
@@ -84,10 +83,7 @@ const loginUser = async (req, res, next) => {
     return;
   }
 
-  const validPassword = await bcrypt.compare(
-    user.password,
-    userExists.password
-  );
+  const validPassword = await bcrypt.compare(password, userExists.password);
 
   if (!validPassword) {
     next(error);
@@ -95,12 +91,9 @@ const loginUser = async (req, res, next) => {
   }
 
   // eslint-disable-next-line no-underscore-dangle
-  const token = jwt.sign(
-    { username: user.username, id: userExists.id },
-    secret
-  );
+  const token = jwt.sign({ username, id: userExists.id }, secret);
 
-  res.status(code).json({ token });
+  res.json({ token });
 };
 
 module.exports = { userRegister, loginUser };

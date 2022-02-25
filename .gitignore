@@ -3,3 +3,4 @@ coverage
 .scannerwork
 .env
 sonar_key
+public/profiles
