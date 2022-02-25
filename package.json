@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --watchAll",
+    "testCov": "jest --coverage",
     "start": "node src",
     "startDev": "nodemon src -q"
   },
@@ -29,5 +30,13 @@
     "helmet": "^5.0.2",
     "mongoose": "^6.2.3",
     "morgan": "^1.10.0"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/index.js",
+      "!src/database/index.js",
+      "!src/server/index.js"
+    ]
   }
 }
