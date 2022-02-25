@@ -52,8 +52,10 @@ const userRegister = async (req, res, next) => {
 
 const loginUser = async (req, res, next) => {
   let user;
+  let code = 200;
   if (req.user) {
     user = req.user;
+    code = 201;
   } else {
     const { username, password } = req.body;
     if (!username || !password) {
@@ -98,7 +100,7 @@ const loginUser = async (req, res, next) => {
     secret
   );
 
-  res.json({ token });
+  res.status(code).json({ token });
 };
 
 module.exports = { userRegister, loginUser };
