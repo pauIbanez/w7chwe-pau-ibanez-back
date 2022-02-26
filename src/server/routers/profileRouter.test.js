@@ -49,6 +49,7 @@ beforeEach(async () => {
   });
 
   await User.create({
+    _id: "621a2cd61c40b29c21eb6e87",
     name: "user 3",
     lastName: "testUser",
     avatar: "user.png",
@@ -95,17 +96,49 @@ describe("Given profiles/list enpoint", () => {
             friends: [],
             id: "621a2ceb1c40b29c21eb6e8a",
           },
-          expect.objectContaining({
+          {
+            id: "621a2cd61c40b29c21eb6e87",
             name: "user 3",
             lastName: "testUser",
             avatar: "user.png",
             username: "testUser3",
             friends: ["621a2ceb1c40b29c21eb6e8a"],
-          }),
+          },
         ],
       };
 
       const { body } = await request(app).get(endpoint).expect(200);
+
+      expect(body).toEqual(expectedResponse);
+    });
+  });
+});
+
+describe("Given profiles/:id enpoint", () => {
+  const endpoint = "/profiles/";
+  describe("When it's called with a valid token and a valid id", () => {
+    test("Then it should return the populated profile", async () => {
+      const expectedResponse = {
+        id: "621a2cd61c40b29c21eb6e87",
+        name: "user 3",
+        lastName: "testUser",
+        avatar: "user.png",
+        username: "testUser3",
+        friends: [
+          {
+            id: "621a2ceb1c40b29c21eb6e8a",
+            name: "user 2",
+            lastName: "testUser",
+            avatar: "user.png",
+            username: "testUser2",
+            friends: [],
+          },
+        ],
+      };
+
+      const { body } = await request(app)
+        .get(`${endpoint}621a2cd61c40b29c21eb6e87`)
+        .expect(200);
 
       expect(body).toEqual(expectedResponse);
     });
