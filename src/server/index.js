@@ -4,6 +4,7 @@ const morgan = require("morgan");
 const { default: helmet } = require("helmet");
 const { notFoundError, errorHandler } = require("./middlewares/errorHandlers");
 const usersRouter = require("./routers/usersRouter");
+const profilesRouter = require("./routers/profileRouter");
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use(express.static("public"));
 
 app.use("/users", usersRouter);
+app.use("/profiles", profilesRouter);
 
 app.use(notFoundError);
 app.use(errorHandler);
