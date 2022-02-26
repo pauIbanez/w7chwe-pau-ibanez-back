@@ -116,6 +116,20 @@ describe("Given profiles/list enpoint", () => {
       expect(body).toEqual(expectedResponse);
     });
   });
+
+  describe("When it's called witout a valid token", () => {
+    test("Then it should respond with the message: 'Invalid token'", async () => {
+      const expectedMessage = "Invalid token";
+      const {
+        body: { error },
+      } = await request(app)
+        .get(endpoint)
+        .set("Authorization", `Bearer invalidToken`)
+        .expect(401);
+
+      expect(error).toBe(expectedMessage);
+    });
+  });
 });
 
 describe("Given profiles/:id enpoint", () => {

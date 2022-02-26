@@ -19,9 +19,9 @@ const auth = (req, res, next) => {
     };
     next();
   } catch (error) {
-    const eror = new Error("Invalid token");
-    eror.code = 401;
-    next(eror);
+    const newError = new Error("Invalid token");
+    newError.code = 401;
+    next(newError);
   }
 };
 
