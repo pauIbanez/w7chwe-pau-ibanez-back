@@ -108,7 +108,10 @@ describe("Given profiles/list enpoint", () => {
         ],
       };
 
-      const { body } = await request(app).get(endpoint).expect(200);
+      const { body } = await request(app)
+        .get(endpoint)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(200);
 
       expect(body).toEqual(expectedResponse);
     });
@@ -139,6 +142,7 @@ describe("Given profiles/:id enpoint", () => {
 
       const { body } = await request(app)
         .get(`${endpoint}621a2cd61c40b29c21eb6e87`)
+        .set("Authorization", `Bearer ${token}`)
         .expect(200);
 
       expect(body).toEqual(expectedResponse);
@@ -154,6 +158,7 @@ describe("Given profiles/:id enpoint", () => {
 
       const { body } = await request(app)
         .get(`${endpoint}dfoaishfgiusgi`)
+        .set("Authorization", `Bearer ${token}`)
         .expect(404);
 
       expect(body).toEqual(expectedResponse);
@@ -177,6 +182,7 @@ describe("Given profiles/update/:id enpoint", () => {
 
       const { body } = await request(app)
         .patch(`${endpoint}621a2cd61c40b29c21eb6e87`)
+        .set("Authorization", `Bearer ${token}`)
         .attach("avatar", file)
         .field("name", "Modified user 3")
         .expect(200);
@@ -194,6 +200,7 @@ describe("Given profiles/update/:id enpoint", () => {
 
       const { body } = await request(app)
         .patch(`${endpoint}dfoaishfgiusgi`)
+        .set("Authorization", `Bearer ${token}`)
         .send({
           name: "Modified user 3",
           lastName: "modified user 3 lastname",
