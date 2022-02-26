@@ -130,6 +130,17 @@ describe("Given profiles/list enpoint", () => {
       expect(error).toBe(expectedMessage);
     });
   });
+
+  describe("When it's called witout a token", () => {
+    test("Then it should respond with the message: 'Token missing'", async () => {
+      const expectedMessage = "Token missing";
+      const {
+        body: { error },
+      } = await request(app).get(endpoint).expect(401);
+
+      expect(error).toBe(expectedMessage);
+    });
+  });
 });
 
 describe("Given profiles/:id enpoint", () => {
