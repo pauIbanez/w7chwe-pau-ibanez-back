@@ -21,6 +21,16 @@ const testUser = {
 };
 
 beforeAll(async () => {
+  jest.mock("multer", () => {
+    const multer = () => ({
+      single: () => (req, res, next) => {
+        req.file = { filename: "favicon.png" };
+        next();
+      },
+    });
+    multer.diskStorage = () => ({ name: "this is storage" });
+    return multer;
+  });
   mongoServer = await MongoMemoryServer.create();
 
   const connectionString = mongoServer.getUri();
@@ -108,9 +118,37 @@ describe("Given profiles/list enpoint", () => {
         ],
       };
 
-      const { body } = await request(app).get(endpoint).expect(200);
+      const { body } = await request(app)
+        .get(endpoint)
+        .set("Authorization", `Bearer ${token}`)
+        .expect(200);
 
       expect(body).toEqual(expectedResponse);
+    });
+  });
+
+  describe("When it's called witout a valid token", () => {
+    test("Then it should respond with the message: 'Invalid token'", async () => {
+      const expectedMessage = "Invalid token";
+      const {
+        body: { error },
+      } = await request(app)
+        .get(endpoint)
+        .set("Authorization", `Bearer invalidToken`)
+        .expect(401);
+
+      expect(error).toBe(expectedMessage);
+    });
+  });
+
+  describe("When it's called witout a token", () => {
+    test("Then it should respond with the message: 'Token missing'", async () => {
+      const expectedMessage = "Token missing";
+      const {
+        body: { error },
+      } = await request(app).get(endpoint).expect(401);
+
+      expect(error).toBe(expectedMessage);
     });
   });
 });
@@ -139,6 +177,7 @@ describe("Given profiles/:id enpoint", () => {
 
       const { body } = await request(app)
         .get(`${endpoint}621a2cd61c40b29c21eb6e87`)
+        .set("Authorization", `Bearer ${token}`)
         .expect(200);
 
       expect(body).toEqual(expectedResponse);
@@ -154,9 +193,37 @@ describe("Given profiles/:id enpoint", () => {
 
       const { body } = await request(app)
         .get(`${endpoint}dfoaishfgiusgi`)
+        .set("Authorization", `Bearer ${token}`)
         .expect(404);
 
       expect(body).toEqual(expectedResponse);
+    });
+  });
+
+  describe("When it's called witout a valid token", () => {
+    test("Then it should respond with the message: 'Invalid token'", async () => {
+      const expectedMessage = "Invalid token";
+      const {
+        body: { error },
+      } = await request(app)
+        .get(`${endpoint}621a2cd61c40b29c21eb6e87`)
+        .set("Authorization", `Bearer invalidToken`)
+        .expect(401);
+
+      expect(error).toBe(expectedMessage);
+    });
+  });
+
+  describe("When it's called witout a token", () => {
+    test("Then it should respond with the message: 'Token missing'", async () => {
+      const expectedMessage = "Token missing";
+      const {
+        body: { error },
+      } = await request(app)
+        .get(`${endpoint}621a2cd61c40b29c21eb6e87`)
+        .expect(401);
+
+      expect(error).toBe(expectedMessage);
     });
   });
 });
@@ -177,6 +244,7 @@ describe("Given profiles/update/:id enpoint", () => {
 
       const { body } = await request(app)
         .patch(`${endpoint}621a2cd61c40b29c21eb6e87`)
+        .set("Authorization", `Bearer ${token}`)
         .attach("avatar", file)
         .field("name", "Modified user 3")
         .expect(200);
@@ -194,6 +262,7 @@ describe("Given profiles/update/:id enpoint", () => {
 
       const { body } = await request(app)
         .patch(`${endpoint}dfoaishfgiusgi`)
+        .set("Authorization", `Bearer ${token}`)
         .send({
           name: "Modified user 3",
           lastName: "modified user 3 lastname",
@@ -201,6 +270,33 @@ describe("Given profiles/update/:id enpoint", () => {
         .expect(404);
 
       expect(body).toEqual(expectedResponse);
+    });
+  });
+
+  describe("When it's called witout a valid token", () => {
+    test("Then it should respond with the message: 'Invalid token'", async () => {
+      const expectedMessage = "Invalid token";
+      const {
+        body: { error },
+      } = await request(app)
+        .patch(`${endpoint}621a2cd61c40b29c21eb6e87`)
+        .set("Authorization", `Bearer invalidToken`)
+        .expect(401);
+
+      expect(error).toBe(expectedMessage);
+    });
+  });
+
+  describe("When it's called witout a token", () => {
+    test("Then it should respond with the message: 'Token missing'", async () => {
+      const expectedMessage = "Token missing";
+      const {
+        body: { error },
+      } = await request(app)
+        .patch(`${endpoint}621a2cd61c40b29c21eb6e87`)
+        .expect(401);
+
+      expect(error).toBe(expectedMessage);
     });
   });
 });
