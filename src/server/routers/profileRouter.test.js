@@ -189,6 +189,33 @@ describe("Given profiles/:id enpoint", () => {
       expect(body).toEqual(expectedResponse);
     });
   });
+
+  describe("When it's called witout a valid token", () => {
+    test("Then it should respond with the message: 'Invalid token'", async () => {
+      const expectedMessage = "Invalid token";
+      const {
+        body: { error },
+      } = await request(app)
+        .get(`${endpoint}621a2cd61c40b29c21eb6e87`)
+        .set("Authorization", `Bearer invalidToken`)
+        .expect(401);
+
+      expect(error).toBe(expectedMessage);
+    });
+  });
+
+  describe("When it's called witout a token", () => {
+    test("Then it should respond with the message: 'Token missing'", async () => {
+      const expectedMessage = "Token missing";
+      const {
+        body: { error },
+      } = await request(app)
+        .get(`${endpoint}621a2cd61c40b29c21eb6e87`)
+        .expect(401);
+
+      expect(error).toBe(expectedMessage);
+    });
+  });
 });
 
 describe("Given profiles/update/:id enpoint", () => {
@@ -233,6 +260,33 @@ describe("Given profiles/update/:id enpoint", () => {
         .expect(404);
 
       expect(body).toEqual(expectedResponse);
+    });
+  });
+
+  describe("When it's called witout a valid token", () => {
+    test("Then it should respond with the message: 'Invalid token'", async () => {
+      const expectedMessage = "Invalid token";
+      const {
+        body: { error },
+      } = await request(app)
+        .patch(`${endpoint}621a2cd61c40b29c21eb6e87`)
+        .set("Authorization", `Bearer invalidToken`)
+        .expect(401);
+
+      expect(error).toBe(expectedMessage);
+    });
+  });
+
+  describe("When it's called witout a token", () => {
+    test("Then it should respond with the message: 'Token missing'", async () => {
+      const expectedMessage = "Token missing";
+      const {
+        body: { error },
+      } = await request(app)
+        .patch(`${endpoint}621a2cd61c40b29c21eb6e87`)
+        .expect(401);
+
+      expect(error).toBe(expectedMessage);
     });
   });
 });
