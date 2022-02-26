@@ -61,4 +61,16 @@ describe("Given users/login endpoint", () => {
       expect(token).toBeTruthy();
     });
   });
+
+  describe("When it's not passed a username or passwword", () => {
+    test("Then it should respond with 400 and the error 'User data not provided'", async () => {
+      const expectedError = "User data not provided";
+
+      const {
+        body: { error },
+      } = await request(app).post("/users/login").expect(400);
+
+      expect(error).toBe(expectedError);
+    });
+  });
 });
