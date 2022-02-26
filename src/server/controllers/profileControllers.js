@@ -28,6 +28,20 @@ const getProfile = async (req, res, next) => {
   }
 };
 
-const updateProfile = (req, res, next) => {};
+const updateProfile = async (req, res, next) => {
+  const { id } = req.params;
+  const updateQuery = req.body;
+  try {
+    const profile = await User.findByIdAndUpdate(id, updateQuery, {
+      runValidators: true,
+    });
+    res.json(profile);
+  } catch (error) {
+    const newError = { ...error };
+    newError.message =
+      "There was an error while updating the profile, please make sure you input a valid ID";
+    next(newError);
+  }
+};
 
 module.exports = { listProfiles, getProfile, updateProfile };

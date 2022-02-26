@@ -25,6 +25,6 @@ const router = express.Router();
 router.get("/list", listProfiles);
 router.get("/:id", getProfile);
 
-router.patch("/update/:id", upload.single("avatar"), updateProfile);
+router.patch("/update/:id", updateProfile);
 
 module.exports = router;
