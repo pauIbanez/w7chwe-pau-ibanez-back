@@ -73,4 +73,34 @@ describe("Given users/login endpoint", () => {
       expect(error).toBe(expectedError);
     });
   });
+
+  describe("When it's passed an existent username but an invalid password", () => {
+    test("Then it should respond with 401 and the error 'Invalid username or password'", async () => {
+      const expectedError = "Invalid username or password";
+
+      const {
+        body: { error },
+      } = await request(app)
+        .post("/users/login")
+        .send({ username: testUser.username, password: "invalidPassword" })
+        .expect(401);
+
+      expect(error).toBe(expectedError);
+    });
+  });
+
+  describe("When it's passed an invalid username", () => {
+    test("Then it should respond with 401 and the error 'Invalid username or password'", async () => {
+      const expectedError = "Invalid username or password";
+
+      const {
+        body: { error },
+      } = await request(app)
+        .post("/users/login")
+        .send({ username: "invalidUsername", password: "invalidPassword" })
+        .expect(401);
+
+      expect(error).toBe(expectedError);
+    });
+  });
 });
