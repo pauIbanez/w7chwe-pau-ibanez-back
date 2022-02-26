@@ -143,4 +143,19 @@ describe("Given profiles/:id enpoint", () => {
       expect(body).toEqual(expectedResponse);
     });
   });
+
+  describe("When it's called with a valid token and an invalid id", () => {
+    test("Then it should return an error 'There was an error while getting the user profile, please make sure you input a valid ID'", async () => {
+      const expectedResponse = {
+        error:
+          "There was an error while getting the user profile, please make sure you input a valid ID",
+      };
+
+      const { body } = await request(app)
+        .get(`${endpoint}dfoaishfgiusgi`)
+        .expect(404);
+
+      expect(body).toEqual(expectedResponse);
+    });
+  });
 });

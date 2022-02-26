@@ -22,6 +22,7 @@ const getProfile = async (req, res, next) => {
     res.json(profile);
   } catch (error) {
     const newError = { ...error };
+    newError.code = 404;
     newError.message =
       "There was an error while getting the user profile, please make sure you input a valid ID";
     next(newError);
