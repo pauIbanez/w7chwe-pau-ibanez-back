@@ -3,6 +3,7 @@ const { MongoMemoryServer } = require("mongodb-memory-server");
 const request = require("supertest");
 const bcrypt = require("bcrypt");
 const { default: mongoose } = require("mongoose");
+const path = require("path");
 
 const connectToDB = require("../../database");
 const User = require("../../database/models/User");
@@ -167,18 +168,17 @@ describe("Given profiles/update/:id enpoint", () => {
       const expectedResponse = {
         id: "621a2cd61c40b29c21eb6e87",
         name: "Modified user 3",
-        lastName: "modified user 3 lastname",
-        avatar: "user.png",
+        lastName: "testUser",
+        avatar: expect.stringContaining("favicon.png"),
         username: "testUser3",
         friends: ["621a2ceb1c40b29c21eb6e8a"],
       };
+      const file = path.join(__dirname, "../../../testAvatars/favicon.png");
 
       const { body } = await request(app)
         .patch(`${endpoint}621a2cd61c40b29c21eb6e87`)
-        .send({
-          name: "Modified user 3",
-          lastName: "modified user 3 lastname",
-        })
+        .attach("avatar", file)
+        .field("name", "Modified user 3")
         .expect(200);
 
       expect(body).toEqual(expectedResponse);
