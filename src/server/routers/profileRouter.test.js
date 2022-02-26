@@ -21,6 +21,16 @@ const testUser = {
 };
 
 beforeAll(async () => {
+  jest.mock("multer", () => {
+    const multer = () => ({
+      single: () => (req, res, next) => {
+        req.file = { filename: "favicon.png" };
+        next();
+      },
+    });
+    multer.diskStorage = () => ({ name: "this is storage" });
+    return multer;
+  });
   mongoServer = await MongoMemoryServer.create();
 
   const connectionString = mongoServer.getUri();
