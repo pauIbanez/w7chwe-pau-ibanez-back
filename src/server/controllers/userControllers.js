@@ -58,9 +58,9 @@ const userRegister = async (req, res, next) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    await uploadBytes(avatarRef, "bla", {
-      contentType: avatar.mimetype,
-    });
+    // await uploadBytes(avatarRef, "bla", {
+    //   contentType: avatar.mimetype,
+    // });
 
     await User.create({
       name,
