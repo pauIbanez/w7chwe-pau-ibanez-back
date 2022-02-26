@@ -39,10 +39,11 @@ const updateProfile = async (req, res, next) => {
     const profile = await User.findByIdAndUpdate(id, updateQuery, {
       runValidators: true,
       new: true,
-    });
+    }).select("-password");
     res.json(profile);
   } catch (error) {
     const newError = { ...error };
+    newError.code = 404;
     newError.message =
       "There was an error while updating the profile, please make sure you input a valid ID";
     next(newError);

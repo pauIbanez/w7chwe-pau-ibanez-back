@@ -159,3 +159,48 @@ describe("Given profiles/:id enpoint", () => {
     });
   });
 });
+
+describe("Given profiles/update/:id enpoint", () => {
+  const endpoint = "/profiles/update/";
+  describe("When it's called with a valid token and a valid id", () => {
+    test("Then it should return the patched profile", async () => {
+      const expectedResponse = {
+        id: "621a2cd61c40b29c21eb6e87",
+        name: "Modified user 3",
+        lastName: "modified user 3 lastname",
+        avatar: "user.png",
+        username: "testUser3",
+        friends: ["621a2ceb1c40b29c21eb6e8a"],
+      };
+
+      const { body } = await request(app)
+        .patch(`${endpoint}621a2cd61c40b29c21eb6e87`)
+        .send({
+          name: "Modified user 3",
+          lastName: "modified user 3 lastname",
+        })
+        .expect(200);
+
+      expect(body).toEqual(expectedResponse);
+    });
+  });
+
+  describe("When it's called with a valid token and an invalid id", () => {
+    test("Then it should return an error 'There was an error while updating the profile, please make sure you input a valid ID'", async () => {
+      const expectedResponse = {
+        error:
+          "There was an error while updating the profile, please make sure you input a valid ID",
+      };
+
+      const { body } = await request(app)
+        .patch(`${endpoint}dfoaishfgiusgi`)
+        .send({
+          name: "Modified user 3",
+          lastName: "modified user 3 lastname",
+        })
+        .expect(404);
+
+      expect(body).toEqual(expectedResponse);
+    });
+  });
+});
