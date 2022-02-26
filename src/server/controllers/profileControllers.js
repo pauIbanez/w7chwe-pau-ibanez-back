@@ -30,10 +30,14 @@ const getProfile = async (req, res, next) => {
 
 const updateProfile = async (req, res, next) => {
   const { id } = req.params;
-  const updateQuery = req.body;
+  const updateQuery = { ...req.body };
+
+  if (req.file) updateQuery.avatar = req.file.filename;
+
   try {
     const profile = await User.findByIdAndUpdate(id, updateQuery, {
       runValidators: true,
+      new: true,
     });
     res.json(profile);
   } catch (error) {
