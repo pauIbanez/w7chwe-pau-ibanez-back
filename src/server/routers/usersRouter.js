@@ -15,7 +15,7 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage });
-// const upload = multer({ dest: "public/profiles" });
+// const upload = multer({ dest: uploadsFolder });
 
 const router = express.Router();
 
