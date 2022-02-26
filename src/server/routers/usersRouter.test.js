@@ -1,3 +1,4 @@
+require("dotenv").config();
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const request = require("supertest");
 const bcrypt = require("bcrypt");
@@ -12,6 +13,7 @@ let mongoServer;
 const testUser = {
   name: "slim",
   lastName: "shady",
+  avatar: "green_emanem.jpeg",
   username: "emanem",
   password: "whiteBoi",
 };
@@ -30,6 +32,8 @@ beforeEach(async () => {
 
   await User.create({
     name: testUser.name,
+    lastName: testUser.lastName,
+    avatar: testUser.avatar,
     username: testUser.username,
     password: hashedPassword,
   });
@@ -44,22 +48,15 @@ afterAll(async () => {
   await mongoServer.stop();
 });
 
-describe("Given users/register endpoint", () => {
+describe("Given users/login endpoint", () => {
   describe("When it's passed a valid user", () => {
-    test("Then it should respond with 201 and a token", async () => {
-      const userToRegister = {
-        name: "James",
-        lastName: "Rhodes",
-        username: "warmachine68",
-        password: "WARMACHINEROX",
-      };
-
+    test("Then it should respond with 200 and a token", async () => {
       const {
         body: { token },
       } = await request(app)
         .post("/users/login")
-        .send(userToRegister)
-        .expect(201);
+        .send({ username: testUser.username, password: testUser.password })
+        .expect(200);
 
       expect(token).toBeTruthy();
     });
