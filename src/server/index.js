@@ -9,20 +9,11 @@ const auth = require("./middlewares/auth");
 
 const app = express();
 
-app.use(
-  cors({
-    methods: ["GET", "PUT", "POST", "DELETE"],
-  })
-);
-
-app.use(morgan("dev"));
-app.use(
-  helmet({
-    crossOriginEmbedderPolicy: false,
-  })
-);
-app.use(express.json());
 app.use(express.static("public"));
+app.use(cors());
+app.use(helmet());
+app.use(morgan("dev"));
+app.use(express.json());
 
 app.use("/users", usersRouter);
 app.use("/profiles", auth, profilesRouter);
