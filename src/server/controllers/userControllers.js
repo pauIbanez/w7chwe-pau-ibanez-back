@@ -1,5 +1,10 @@
 const { initializeApp } = require("firebase/app");
-const { getStorage, ref, uploadBytes } = require("firebase/storage");
+const {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+} = require("firebase/storage");
 
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -58,9 +63,11 @@ const userRegister = async (req, res, next) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // await uploadBytes(avatarRef, "bla", {
-    //   contentType: avatar.mimetype,
-    // });
+    const avatarData = Buffer.from(avatar.path);
+    await uploadBytes(avatarRef, avatarData, {
+      contentType: avatar.mimetype,
+    });
+    const firebaseFileURL = await getDownloadURL(avatarRef);
 
     await User.create({
       name,
@@ -68,6 +75,7 @@ const userRegister = async (req, res, next) => {
       username,
       password: hashedPassword,
       avatar: avatar.filename,
+      firebaseBackup: firebaseFileURL,
     });
 
     res.status(201).json({});
