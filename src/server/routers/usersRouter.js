@@ -2,7 +2,7 @@ const express = require("express");
 const multer = require("multer");
 const { userRegister, loginUser } = require("../controllers/userControllers");
 
-const uploadsFolder = "public/profiles";
+const uploadsFolder = "public/avatars";
 
 const storage = multer.diskStorage({
   destination(req, file, cb) {
