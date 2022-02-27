@@ -119,8 +119,7 @@ const loginUser = async (req, res, next) => {
 
   // eslint-disable-next-line no-underscore-dangle
   const token = jwt.sign({ username, id: userExists.id }, secret);
-
-  res.json({ token });
+  res.json({ token, id: userExists.id });
 };
 
 module.exports = { userRegister, loginUser };
