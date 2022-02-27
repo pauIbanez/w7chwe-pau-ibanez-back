@@ -30,7 +30,7 @@ const getProfile = async (req, res, next) => {
 };
 
 const updateProfile = async (req, res, next) => {
-  const { id } = req.params;
+  const { id } = req.user;
   const updateQuery = { ...req.body };
 
   if (req.file) updateQuery.avatar = req.file.filename;
