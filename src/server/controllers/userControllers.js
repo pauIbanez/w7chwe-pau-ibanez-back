@@ -1,4 +1,3 @@
-const { initializeApp } = require("firebase/app");
 const {
   getStorage,
   ref,
@@ -12,19 +11,9 @@ const path = require("path");
 const fs = require("fs");
 
 const User = require("../../database/models/User");
+const { fireBaseApp } = require("..");
 
 const secret = process.env.TOKEN_SECRET;
-
-const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: "redsocial-d7b8b.firebaseapp.com",
-  projectId: "redsocial-d7b8b",
-  storageBucket: "redsocial-d7b8b.appspot.com",
-  messagingSenderId: "778147784801",
-  appId: "1:778147784801:web:8ea849e736d1dedd172220",
-};
-
-const fireBaseApp = initializeApp(firebaseConfig);
 
 const userRegister = async (req, res, next) => {
   const { name, lastName, username, password } = req.body;

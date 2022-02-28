@@ -1,6 +1,6 @@
 require("dotenv").config();
 const connectToDB = require("./database");
-const app = require("./server");
+const { app } = require("./server");
 const startServer = require("./server/startServer");
 
 const connectionString = process.env.CONN_STRING;
