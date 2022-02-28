@@ -30,9 +30,6 @@ const userRegister = async (req, res, next) => {
   const { name, lastName, username, password } = req.body;
   const avatar = req.file;
 
-  const storage = getStorage(fireBaseApp);
-  const avatarRef = ref(storage, avatar.path);
-
   const runErrors = (error) => {
     fs.unlink(path.join("public/profiles", avatar.filename), () => {
       next(error);
@@ -59,32 +56,40 @@ const userRegister = async (req, res, next) => {
     return;
   }
 
-  try {
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
 
-    const avatarData = Buffer.from(avatar.path);
-    await uploadBytes(avatarRef, avatarData, {
-      contentType: avatar.mimetype,
-    });
-    const firebaseFileURL = await getDownloadURL(avatarRef);
+  fs.readFile(avatar.path, async (error, file) => {
+    if (error) {
+      runErrors(error);
+      return;
+    }
+    try {
+      const storage = getStorage(fireBaseApp);
+      const avatarRef = ref(storage, avatar.filename);
 
-    await User.create({
-      name,
-      lastName,
-      username,
-      password: hashedPassword,
-      avatar: avatar.filename,
-      firebaseBackup: firebaseFileURL,
-    });
+      await uploadBytes(avatarRef, file, {
+        contentType: avatar.mimetype,
+      });
+      const firebaseFileURL = await getDownloadURL(avatarRef);
 
-    res.status(201).json({});
-  } catch (error) {
-    const newError = { ...error };
-    newError.message =
-      "There was an issue creating your user, please try again later";
-    runErrors(newError);
-  }
+      await User.create({
+        name,
+        lastName,
+        username,
+        password: hashedPassword,
+        avatar: avatar.filename,
+        firebaseBackup: firebaseFileURL,
+      });
+
+      res.status(201).json({});
+    } catch (eror) {
+      const newError = { ...eror };
+      newError.message =
+        "There was an issue creating your user, please try again later";
+      runErrors(newError);
+    }
+  });
 };
 
 const loginUser = async (req, res, next) => {
